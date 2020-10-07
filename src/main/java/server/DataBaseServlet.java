@@ -1,6 +1,7 @@
 package server;
 
 
+import beans.CountryBean;
 import dao.CountryDAO;
 import entities.Country;
 import exceptions.CantFindCountryException;
@@ -48,16 +49,11 @@ public class DataBaseServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.println("<h1>Hello from Tomcat</h1>");
         try {
-            List<Country> countries = countryDAO.findAll();
-            out.println("<ul>");
-            countries.forEach(country -> {
-                out.println("<li>" + country + "</li>");
-            });
-            out.println("</ul>");
+            CountryBean countryBean = new CountryBean();
+            countryBean.setCountries(countryDAO.findAll());
+            request.setAttribute("countryBean", countryBean);
+            request.getRequestDispatcher("/showcountries.jsp").forward(request, response);
         } catch (CantFindCountryException e) {
             e.printStackTrace();
         }
