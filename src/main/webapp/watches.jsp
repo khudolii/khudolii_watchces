@@ -1,3 +1,10 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: Yevhenii Khudolii
+  Date: 12.10.2020
+  Time: 18:11
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
@@ -9,7 +16,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Countries</title>
+    <title>Watches</title>
     <link rel="stylesheet" type="text/css" href="resources/styles.css">
 </head>
 <body>
@@ -17,21 +24,21 @@
     <thead>
     <tr>
         <th>id</th>
-        <th>Name</th>
-        <th>Short</th>
+        <th>Mark</th>
+        <th>Type</th>
     </tr>
     </thead>
     <tbody>
-    <jsp:useBean id="countryBean" scope="request" type="beans.CountryBean"/>
-    <c:forEach items="${countryBean.countries}" var="c">
+    <jsp:useBean id="watchBean" scope="request" type="beans.WatchBean"/>
+    <c:forEach items="${watchBean.watches}" var="c">
         <tr>
             <td>${c.id}</td>
-            <td>${c.name}</td>
-            <td>${c.shortName}</td>
-            <td><a href="http://localhost:8080/demo12_war_exploded?actionName=getWatchesByCountryId&countryId=${c.id}">Look at watches</a></td>
+            <td>${c.mark}</td>
+            <td>${c.type}</td>
         </tr>
     </c:forEach>
     </tbody>
+    <a href="showcountries.jsp" type="button">Back to Countries</a>
 </table>
 </body>
 </html>

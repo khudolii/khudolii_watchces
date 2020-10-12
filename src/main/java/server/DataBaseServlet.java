@@ -2,6 +2,7 @@ package server;
 
 
 import beans.CountryBean;
+import beans.WatchBean;
 import dao.CountryDAOImpl;
 import dao.DAOFactory;
 import exceptions.CantFindCountryException;
@@ -20,7 +21,9 @@ import java.sql.SQLException;
 
 @WebServlet(name = "DataBaseServlet", urlPatterns = {"*.html"})
 public class DataBaseServlet extends HttpServlet {
-    DAOFactory daoFactory;
+    private DAOFactory daoFactory;
+    private CountryBean countryBean = null;
+    private WatchBean watchBean = null;
 
     @Override
     public void init() throws ServletException {
@@ -37,17 +40,48 @@ public class DataBaseServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            CountryBean countryBean = new CountryBean();
-
-            daoFactory.getCountryDAO().getCountries();
-            //countryBean.setCountries(countryDAOImpl.findAll());
+        String actionName = request.getParameter("actionName");
+        if (actionName == null) {
+            if (countryBean == null) {
+                try {
+                    countryBean = new CountryBean();
+                    countryBean.setCountries(daoFactory.getCountryDAO().getCountries());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    request.getRequestDispatcher("/error.jsp").forward(request, response);
+                }
+            }
             request.setAttribute("countryBean", countryBean);
             request.getRequestDispatcher("/showcountries.jsp").forward(request, response);
-        } catch (CantFindCountryException | SQLException e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } else if (actionName.equals("getWatchesByCountryId")) {
+            actionGetWatchesByCountryId(request, response);
+        }
+
+    }
+
+    private void actionGetWatchesByCountryId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int countyId = Integer.parseInt(request.getParameter("countryId"));
+        if (countyId != 0) {
+            sendErrorMessage(request, response);
+        }
+        watchBean = new WatchBean();
+        try {
+            watchBean.setWatches(daoFactory.getWatchDAO().getWatchesByCountryId(countyId));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            sendErrorMessage(request, response);
+        }
+        request.setAttribute("watchBean", watchBean);
+        request.getRequestDispatcher("/watches.jsp").forward(request, response);
+    }
+
+    private void sendErrorMessage(HttpServletRequest request, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        try {
             request.getRequestDispatcher("/error.jsp").forward(request, response);
+        } catch (ServletException | IOException e) {
+            e.printStackTrace();
         }
     }
 }

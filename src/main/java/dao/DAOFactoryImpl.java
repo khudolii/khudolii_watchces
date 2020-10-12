@@ -8,13 +8,13 @@ import java.sql.SQLException;
 
 public class DAOFactoryImpl extends DAOFactory {
     private Connection connection = null;
-    private final String DATA_SOURCE = "java:comp/env/jdbc/example";
 
     public DAOFactoryImpl() throws Exception {
         this.connection = getConnectionFromPool();
     }
     private Connection getConnectionFromPool() throws Exception {
         InitialContext ctx = new InitialContext();
+        String DATA_SOURCE = "java:comp/env/jdbc/example";
         DataSource ds = (DataSource) ctx.lookup(DATA_SOURCE);
         return ds.getConnection();
     }

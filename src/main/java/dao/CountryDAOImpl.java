@@ -18,7 +18,7 @@ public class CountryDAOImpl implements CountryDAO {
     public List<Country> getCountries() throws SQLException {
         try {
             List<Country> result = new ArrayList<>();
-            PreparedStatement ps = connection.prepareStatement("select * from country");
+            PreparedStatement ps = connection.prepareStatement("select * from county");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt("id");
